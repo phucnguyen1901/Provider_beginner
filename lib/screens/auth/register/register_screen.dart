@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider_my_project/provider/auth_provider.dart';
+import 'package:provider_my_project/provider/register_provider/register_provider.dart';
+import 'package:provider_my_project/provider/register_provider/register_state.dart';
 import 'package:provider_my_project/routes.dart';
 import 'package:provider_my_project/widgets/textfield.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +21,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Status registerStatus = context.watch<AuthProvider>().registerStatus;
-    String errorMessage = context.watch<AuthProvider>().showErrorMessage;
+    RegisterScreenState registerState =
+        context.watch<RegisterProvider>().registerScreenState;
 
     return Scaffold(
       body: SafeArea(
@@ -46,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                checkStatusRegister(context, registerStatus, errorMessage),
+                checkLoginState(registerState, context),
                 const SizedBox(
                   height: 20,
                 ),
@@ -54,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: () async {
                       final isValidForm = formkey.currentState!.validate();
                       if (isValidForm) {
-                        await context.read<AuthProvider>().registerUser(
+                        await context.read<RegisterProvider>().registerUser(
                             fullNameController.text,
                             usernameController.text,
                             passwordController.text);
@@ -63,7 +65,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Text("Register")),
                 TextButton(
                     onPressed: () {
-                      context.read<AuthProvider>().reset();
                       Navigator.pushNamed(context, RouteManager.loginPage);
                     },
                     child: Text("Login?"))
@@ -74,28 +75,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+}
 
-  Widget checkStatusRegister(BuildContext context, Status stt, String error) {
-    switch (stt) {
-      case Status.Registered:
-        return ElevatedButton(
-            onPressed: () {
-              context.read<AuthProvider>().reset();
-              Navigator.pushNamed(context, RouteManager.loginPage);
-            },
-            child: const Text(
-              "Registered Successfully",
-            ));
-      case Status.Registering:
-        return CircularProgressIndicator();
-      case Status.RegistrationFailed:
-        return Text(
-          error,
-          style: TextStyle(color: Colors.red),
-        );
-
-      default:
-        return Container();
-    }
+Widget checkLoginState(state, context) {
+  if (state is RegisteringState) return const CircularProgressIndicator();
+  if (state is RegisteredState) {
+    return ElevatedButton(
+        onPressed: () {
+          Navigator.pushNamed(context, RouteManager.loginPage);
+        },
+        child: const Text(
+          "Registered Successfully",
+        ));
   }
+  if (state is RegistrationFailedState) {
+    return Text(state.errorMessage, style: TextStyle(color: Colors.red));
+  }
+  return Container();
 }

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:provider_my_project/models/user_model.dart';
 import 'package:provider_my_project/provider/user_provider.dart';
 import 'package:provider_my_project/routes.dart';
-import 'package:provider_my_project/widgets/textfield.dart';
 import 'package:image_picker/image_picker.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -43,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         backgroundColor: Colors.purple,
                         child: CircleAvatar(
                             radius: 100,
-                            
                             backgroundImage: isSetAvatar
                                 ? FileImage(File(pathAvatar))
                                 : AssetImage(pathAvatar) as ImageProvider),
@@ -56,7 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           decoration: BoxDecoration(
                               color: Colors.blue,
                               shape: BoxShape.circle,
-                              border: Border.all(width: 3, color: Colors.orange)),
+                              border:
+                                  Border.all(width: 3, color: Colors.orange)),
                           child: FittedBox(
                             child: IconButton(
                                 onPressed: () async {
@@ -80,16 +79,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: Column(
                       children: [
-                        Text(user.fullname ?? "No Name",style: Theme.of(context).textTheme.headline6,),
-                        ElevatedButton(onPressed: (){
-                          Navigator.pushReplacementNamed(context,RouteManager.loginPage);
-                        }, child: Text("Logout"))
+                        Text(
+                          user.fullname ?? "No Name",
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(
+                                  context, RouteManager.loginPage);
+                              // Navigator.pushNamed(context, RouteManager.loginPage);
+                              // Navigator.push(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
+                            },
+                            child: Text("Logout"))
                       ],
                     ),
                   )
                 ],
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               Text("AccessToken: ${user.accessToken}")
             ],
           ),

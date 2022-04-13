@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:provider_my_project/provider/auth_provider.dart';
+import 'package:provider_my_project/provider/textfield_provider/textfield_provider.dart';
 
 class TextFieldPasswordUser extends StatelessWidget {
   const TextFieldPasswordUser({
@@ -12,7 +12,7 @@ class TextFieldPasswordUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isShowPassword = context.watch<AuthProvider>().checkShowPassword;
+    bool isShowPassword = context.watch<TextFieldProvider>().showPassword;
 
     return Row(
       children: [
@@ -27,21 +27,23 @@ class TextFieldPasswordUser extends StatelessWidget {
                 }
               },
               obscureText: isShowPassword,
-              // onSaved: (value) => numberPhone = value!,
               decoration: InputDecoration(
                   hintText: "Password",
                   prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(onPressed: (){
-                    context.read<AuthProvider>().setShowPassword();
-                  }, icon: isShowPassword ? Icon(Icons.visibility_off): Icon(Icons.visibility)),
-                  enabledBorder:  const OutlineInputBorder(
-                          borderRadius:  BorderRadius.all(Radius.circular(20)),
-                          borderSide: BorderSide(color: Colors.purple)),
-                  focusedBorder:  const OutlineInputBorder(
-                          borderRadius:  BorderRadius.all(const Radius.circular(20)),
-                          borderSide:  BorderSide(color: Colors.blue)))),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        context.read<TextFieldProvider>().setShowPassword();
+                      },
+                      icon: isShowPassword
+                          ? Icon(Icons.visibility_off)
+                          : Icon(Icons.visibility)),
+                  enabledBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide(color: Colors.purple)),
+                  focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(const Radius.circular(20)),
+                      borderSide: BorderSide(color: Colors.blue)))),
         ),
-
       ],
     );
   }
@@ -57,7 +59,6 @@ class TextFieldUsernameUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Row(
       children: [
         Expanded(
@@ -70,22 +71,20 @@ class TextFieldUsernameUser extends StatelessWidget {
                 return null;
               },
               // onSaved: (value) => name = value!,
-              decoration: const  InputDecoration(
+              decoration: const InputDecoration(
                   hintText: "Username",
                   prefixIcon: Icon(Icons.person),
-                  enabledBorder:  OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          borderSide: BorderSide(color: Colors.purple)),
-                  focusedBorder:   OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          borderSide: BorderSide(color: Colors.blue)))),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide(color: Colors.purple)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide(color: Colors.blue)))),
         ),
-
       ],
     );
   }
 }
-
 
 class TextFieldFullNameUser extends StatelessWidget {
   const TextFieldFullNameUser({
@@ -96,7 +95,6 @@ class TextFieldFullNameUser extends StatelessWidget {
   final TextEditingController fullNameController;
   @override
   Widget build(BuildContext context) {
-
     return Row(
       children: [
         Expanded(
@@ -109,17 +107,16 @@ class TextFieldFullNameUser extends StatelessWidget {
                 return null;
               },
               // onSaved: (value) => name = value!,
-              decoration: const  InputDecoration(
+              decoration: const InputDecoration(
                   hintText: "Full Name",
                   prefixIcon: Icon(Icons.person),
-                  enabledBorder:  OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          borderSide: BorderSide(color: Colors.purple)),
-                  focusedBorder:   OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          borderSide: BorderSide(color: Colors.blue)))),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide(color: Colors.purple)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide(color: Colors.blue)))),
         ),
-
       ],
     );
   }

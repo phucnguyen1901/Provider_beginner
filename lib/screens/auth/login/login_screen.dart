@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider_my_project/models/user_model.dart';
 import 'package:provider_my_project/provider/auth_provider.dart';
+import 'package:provider_my_project/provider/login_provider/login_provider.dart';
+import 'package:provider_my_project/provider/login_provider/login_state.dart';
+import 'package:provider_my_project/provider/textfield_provider/textfield_provider.dart';
 import 'package:provider_my_project/provider/user_provider.dart';
 import 'package:provider_my_project/routes.dart';
 import 'package:provider_my_project/screens/home/home_screen.dart';
@@ -20,8 +23,19 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Status loginStatus = context.watch<AuthProvider>().loginStatus;
+    var loginState = context.watch<LoginProvider>().loginState;
+    if (loginState is LoggedInState) {
+      context.read<UserProvider>().setUser(loginState.user);
+      Future.delayed(Duration.zero, () {
+        Navigator.pushNamed(context, RouteManager.homePage);
+      });
+    }
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -43,39 +57,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  loginStatus == Status.Authenticating
-                      ? CircularProgressIndicator()
-                      : loginStatus == Status.LoggInFailed
-                          ? const Text(
-                              "Login Failed",
-                              style: TextStyle(color: Colors.red),
-                            )
-                          : Container(),
+                  //check state
+                  checkLoginState(loginState),
                   const SizedBox(
                     height: 20,
                   ),
                   ElevatedButton(
                       onPressed: () async {
+                        if (loginState is LoggedInState) {
+                          Navigator.pushNamed(context, RouteManager.homePage);
+                        }
                         final isValidForm = formkey.currentState!.validate();
                         if (isValidForm) {
-                          var user = await context
-                              .read<AuthProvider>()
-                              .loginUser(usernameController.text,
-                                  passwordController.text);
-
-                          if (user['status'] == 200) {
-                            context.read<UserProvider>().setUser(user['data']);
-                            Navigator.pushNamed(
-                                context, RouteManager.bottomNav);
-                          } else {
-                            print("Login Failed");
-                          }
+                          await context.read<LoginProvider>().loginUser(
+                              usernameController.text, passwordController.text);
                         }
                       },
-                      child: Text("Login")),
-                  TextButton(onPressed: () {
-                    Navigator.pushNamed(context, RouteManager.registerPage);
-                  }, child: Text("Register?"))
+                      child: const Text("Login")),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, RouteManager.registerPage);
+                      },
+                      child: const Text("Register?"))
                 ],
               ),
             ),
@@ -84,4 +87,12 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
+
+Widget checkLoginState(state) {
+  if (state is AuthenticatingState) return const CircularProgressIndicator();
+  if (state is LoginFailedState) {
+    return Text(state.errorMessage, style: TextStyle(color: Colors.red));
+  }
+  return Container();
 }
